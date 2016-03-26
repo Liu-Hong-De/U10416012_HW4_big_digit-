@@ -62,7 +62,7 @@ public class BigInteger{
 		
 		if(carry == 1) {	//deal with overflow
 			
-			if(isPositive(op1)) {
+			if(isPositive(num1)) {
 				result.add(1);
 			}
 			
@@ -87,8 +87,8 @@ public class BigInteger{
 		
 		//align the digit
 		int length = Math.max(value.size(), t.value.size());
-		List<Integer> op1 = copyOf(value, length);
-		List<Integer> op2 = copyOf(t.value, length);
+		List<Integer> num1 = copyOf(value, length);
+		List<Integer> num2 = copyOf(t.value, length);
 		List<Integer> result = new ArrayList<>();
 		
 		int borrow = 0;
