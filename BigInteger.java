@@ -128,6 +128,68 @@ public class BigInteger{
 		return new BigInteger(result);
 	}
 	
+	//multiply
+	private BigInteger multiply(int value1, int shift) {
+		List<Integer> result = new ArrayList<>();
+		
+		for(int i = 0; i < shift; i++) {
+			result.add(0);		//if the result overflow, and add 0 at a first digit
+		}
+		
+		int carry = 0;
+		for(int i= 0; i < value.size() - 1; i++) {
+			int tmp= value.get(i) * value1 + carry;
+			result.add(tmp % 10000);
+			carry = tmp / 10000;
+		}
+		
+		if(carry != 0) {
+			result.add(carry);
+			
+			for(int i = 0; i < 8; i++) {
+				result.add(0);
+			}
+		}
+		
+		else {
+			result.add(0);
+		}
+		
+		return new BigInteger(result);
+	}
+	
+	public BigInteger multiply(BigInteger t) {
+		
+		//change to positive number
+		BigInteger num1 = isNegative(value) ? new BigInteger(toComplement(value)) : this;
+		List<Integer> num2 = isNegative(t.value) ? toComplement(t.value) : t.value;
+		
+		//calculate with every digit
+		List<BigInteger> rs = new ArrayList<>();
+		for(int i = 0; i < num2.size() - 1; i++) {
+			rs.add(num1.multiply(num2.get(i), i));
+		}
+		
+		//add every digit 
+		BigInteger result = rs.get(0);
+		for(int i = 1; i < rs.size(); i++) {
+			result = result.add(rs.get(i));
+		}
+		
+		//judge positive or negative
+		return getLast(value) + getLast(t.value) == 9999 ? new BigInteger(toComplement(result.value)) : result;
+	}
+	
+	//judge result is greater or equal the number which the user input
+	public boolean greaterOrEquals(BigInteger t) {
+		return isNegative(subtract(t).value) ? false : true;
+	}
+	
+	//judge result is less or equal the number which the user input
+	private boolean islessOrEqualsToQuotient(BigInteger num1, BigInteger num2) {
+		return num1.greaterOrEquals(multiply(num2)) ? true : false;
+	}
+	
 	//complement,deal with overflow
 	private static List<Integer> toComplement(List<Integer> v) {
 		List<Integer> comp = new ArrayList<>();
