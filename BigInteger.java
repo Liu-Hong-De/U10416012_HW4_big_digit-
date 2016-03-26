@@ -238,6 +238,23 @@ public class BigInteger{
 		return getLast(value) + getLast(t.value) == 9999 ? new BigInteger(toComplement(result.value)) : result;
 	}
 	
+	public String toString() {
+		//use positive to represent
+		List<Integer> v = isNegative(value) ? toComplement(value) : value;
+		StringBuilder builder = new StringBuilder();
+		
+		for(int i = v.size() - 1; i > -1; i--) {
+			builder.append(String.format("%04d", v.get(i)));
+		}
+		
+		//remove the fist digit which is replace zero, if the number is negative add -
+		while(builder.length() > 0 && builder.charAt(0) == '0') {
+			builder.deleteCharAt(0);
+		}
+		
+		return builder.length() == 0 ? "0" : isNegative(value) ? builder.insert(0, '-').toString() : builder.toString();
+	}
+	
 	//complement,deal with overflow
 	private static List<Integer> toComplement(List<Integer> v) {
 		List<Integer> comp = new ArrayList<>();
@@ -248,6 +265,20 @@ public class BigInteger{
 		
 		comp.set(0, comp.get(0) + 1);
 		return comp;
+	}
+	
+	private static List<Integer> copyOf(List<Integer> original, int newLength) {
+		List<Integer> v = new ArrayList<>(original);
+		
+		for(int i = v.size(); i < newLength; i++) {
+			v.add(isPositive(original) ? 0 : 9999);
+		}
+		
+		return v;
+	}
+	
+	private static Integer getLast(List<Integer> list) {
+		return list.get(list.size() - 1);
 	}
 	
 	//if the number which the user input is a negative number, then add 9999
