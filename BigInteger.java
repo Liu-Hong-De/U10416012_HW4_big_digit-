@@ -190,6 +190,54 @@ public class BigInteger{
 		return num1.greaterOrEquals(multiply(num2)) ? true : false;
 	}
 	
+	//divide
+	private BigInteger divide(int t) {
+		List<Integer> result = new ArrayList<>();
+		
+		int remain = 0;
+		for(int i = value.size() - 1; i > -1; i--) {
+			int tmp = value.get(i) + remain;
+			result.add(tmp / t);
+			remain = (tmp % t) * 10000;
+		}
+		
+		Collections.reverse(result);
+		
+		for(int i = 0; i < 8 - (result.size() % 8); i++) {
+			result.add(0);
+		}
+		
+		return new BigInteger(result);
+	}
+	
+	public BigInteger divide(BigInteger t) {
+		
+		//first use positive number represent the negative number
+		BigInteger num1 = isNegative(value) ? new BigInteger(toComplement(value)) : this;
+		BigInteger num2 = isNegative(t.value) ? new BigInteger(toComplement(t.value)) : t;
+		
+		BigInteger one = new BigInteger("1");
+		BigInteger left = new BigInteger("0");
+		BigInteger right = num1;
+		
+		//search x.islessOrEqualsToQuotient(num1, num2) is true, and fint the max x
+		while(right.greaterOrEquals(left)) {
+			BigInteger x = left.add(right).divide(2);
+			
+			if(x.islessOrEqualsToQuotient(num1, num2)) {
+				left = x.add(one);
+			}
+			
+			else {
+				right = x.subtract(one);
+			}
+		}
+		BigInteger result = left.subtract(one);
+		
+		//judge the result is positive or negative
+		return getLast(value) + getLast(t.value) == 9999 ? new BigInteger(toComplement(result.value)) : result;
+	}
+	
 	//complement,deal with overflow
 	private static List<Integer> toComplement(List<Integer> v) {
 		List<Integer> comp = new ArrayList<>();
