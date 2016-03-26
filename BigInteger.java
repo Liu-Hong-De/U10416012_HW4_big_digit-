@@ -78,6 +78,56 @@ public class BigInteger{
 		return new BigInteger(result);
 	}
 	
+	//subtract
+	public BigInteger subtract(BigInteger t) {
+	
+		if(isNegative(t.value)) {
+			return add(new BigInteger(toComplement(t.value)));
+		}
+		
+		//align the digit
+		int length = Math.max(value.size(), t.value.size());
+		List<Integer> op1 = copyOf(value, length);
+		List<Integer> op2 = copyOf(t.value, length);
+		List<Integer> result = new ArrayList<>();
+		
+		int borrow = 0;
+		for(int i = 0; i < length - 1; i++) {
+			int c = num1.get(i) - num2.get(i) - borrow;
+			
+			if(c > -1) {
+				borrow = 0;
+			}
+			
+			else {		//borrow place
+				c += 10000;
+				borrow = 1;
+			}
+			
+			result.add(c);
+		}
+		
+		if(borrow == 1) {
+			if(isNegative(num1)) {
+				result.add(9998);
+			}
+			
+			else {		//when overflow on the positive integer subtract another positive integer, the result is zero
+				result.clear();
+			}
+			
+			for(int i = 0; i < 8; i++) {
+				result.add(9999);
+			}
+		}
+		
+		else {		//complement, if the number which the user input is a positive integer, and then add 0, if it is a negative integer, add 9999 
+			result.add(isNegative(num1) ? 9999 : 0);
+		}
+		
+		return new BigInteger(result);
+	}
+	
 	//complement,deal with overflow
 	private static List<Integer> toComplement(List<Integer> v) {
 		List<Integer> comp = new ArrayList<>();
